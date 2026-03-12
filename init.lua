@@ -84,4 +84,27 @@ cmp.setup({
     { name = "nvim_lsp" },
   },
 })
+-- 1. Load the Industry colorscheme first
+vim.cmd('colorscheme industry')
 
+-- 2. Strip the background colors so Kitty's transparency works
+-- This keeps all of Industry's syntax highlighting (blue, green, yellow, etc.)
+local function clear_bg()
+    local groups = {
+        "Normal", "NormalNC", "LineNr", "Folded", 
+        "NonText", "SpecialKey", "VertSplit", 
+        "SignColumn", "EndOfBuffer", "StatusLine", "StatusLineNC"
+    }
+    for _, group in ipairs(groups) do
+        vim.api.nvim_set_hl(0, group, { bg = "none", ctermbg = "none" })
+    end
+end
+
+-- Run it immediately
+clear_bg()
+
+-- 3. Make sure the background stays gone if you reload the file
+vim.api.nvim_create_autocmd("ColorScheme", {
+    pattern = "*",
+    callback = clear_bg,
+})
